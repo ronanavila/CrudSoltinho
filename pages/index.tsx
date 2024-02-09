@@ -5,17 +5,19 @@ import { todoController } from "@ui/controller/todo";
 const bg = "https://mariosouto.com/cursos/crudcomqualidade/bg";
 interface HomeTodo {
     uid: string;
+    date: string;
     content: string;
+    done: boolean;
 }
 function Page() {
     const [todos, setTodos] = useState<HomeTodo[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        console.log(todos);
         todoController.get().then((todoArray) => {
             setTodos(todoArray);
         });
-        console.log(todos);
+        setLoading(false);
     }, []);
 
     return (
@@ -58,31 +60,34 @@ function Page() {
                     </thead>
 
                     <tbody>
-                        {todos.map((todo) => {
-                            return (
-                                <tr key={todo.uid}>
-                                    <td>
-                                        <input type="checkbox" />
-                                    </td>
-                                    <td>{todo.uid?.substring(0, 4)}</td>
-                                    <td>{todo.content}</td>
-                                    <td align="right">
-                                        <button data-type="delete">
-                                            Apagar
-                                        </button>
-                                    </td>
-                                </tr>
-                            );
-                        })}
-                        <tr>
-                            <td
-                                colSpan={4}
-                                align="center"
-                                style={{ textAlign: "center" }}
-                            >
-                                Carregando...
-                            </td>
-                        </tr>
+                        {!loading &&
+                            todos.map((todo) => {
+                                return (
+                                    <tr key={todo.uid}>
+                                        <td>
+                                            <input type="checkbox" />
+                                        </td>
+                                        <td>{todo.uid.substring(0, 4)}</td>
+                                        <td>{todo.content}</td>
+                                        <td align="right">
+                                            <button data-type="delete">
+                                                Apagar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        {loading ? (
+                            <tr>
+                                <td
+                                    colSpan={4}
+                                    align="center"
+                                    style={{ textAlign: "center" }}
+                                >
+                                    Carregando...
+                                </td>
+                            </tr>
+                        ) : null}
                         <tr>
                             <td colSpan={4} align="center">
                                 Nenhum item encontrado
