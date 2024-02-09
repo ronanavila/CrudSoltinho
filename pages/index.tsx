@@ -5,17 +5,16 @@ import { todoController } from "@ui/controller/todo";
 const bg = "https://mariosouto.com/cursos/crudcomqualidade/bg";
 interface HomeTodo {
     uid: string;
-    date: string;
     content: string;
-    done: boolean;
 }
 function Page() {
     const [todos, setTodos] = useState<HomeTodo[]>([]);
+    const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        todoController.get().then((todoArray) => {
-            setTodos(todoArray);
+        todoController.get({ page }).then(({ todos }) => {
+            setTodos(todos);
         });
         setLoading(false);
     }, []);
@@ -99,8 +98,11 @@ function Page() {
                                 align="center"
                                 style={{ textAlign: "center" }}
                             >
-                                <button data-type="load-more">
-                                    Carregar mais{" "}
+                                <button
+                                    data-type="load-more"
+                                    onClick={() => setPage(page + 1)}
+                                >
+                                    Página {page} Carregar mais{" "}
                                     <span
                                         style={{
                                             display: "inline-block",
