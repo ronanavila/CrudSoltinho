@@ -1,7 +1,23 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GlobalStyles } from "@ui/theme/GlobalStyles";
+import { todoController } from "@ui/controller/todo";
+
+const bg = "https://mariosouto.com/cursos/crudcomqualidade/bg";
+interface HomeTodo {
+    uid: string;
+    content: string;
+}
 function Page() {
-    const bg = "https://mariosouto.com/cursos/crudcomqualidade/bg";
+    const [todos, setTodos] = useState<HomeTodo[]>([]);
+
+    useEffect(() => {
+        console.log(todos);
+        todoController.get().then((todoArray) => {
+            setTodos(todoArray);
+        });
+        console.log(todos);
+    }, []);
+
     return (
         <main>
             <GlobalStyles themeName="indigo" />
@@ -42,24 +58,22 @@ function Page() {
                     </thead>
 
                     <tbody>
-                        <tr>
-                            <td>
-                                <input type="checkbox" />
-                            </td>
-                            <td>d4f26</td>
-                            <td>
-                                Conteúdo de uma TODO Lorem ipsum dolor sit amet
-                                consectetur adipisicing elit. Eaque vero facilis
-                                obcaecati, autem aliquid eius! Consequatur eaque
-                                doloribus laudantium soluta optio odit,
-                                provident, ab voluptates doloremque voluptas
-                                recusandae aspernatur aperiam.
-                            </td>
-                            <td align="right">
-                                <button data-type="delete">Apagar</button>
-                            </td>
-                        </tr>
-
+                        {todos.map((todo) => {
+                            return (
+                                <tr key={todo.uid}>
+                                    <td>
+                                        <input type="checkbox" />
+                                    </td>
+                                    <td>{todo.uid?.substring(0, 4)}</td>
+                                    <td>{todo.content}</td>
+                                    <td align="right">
+                                        <button data-type="delete">
+                                            Apagar
+                                        </button>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                         <tr>
                             <td
                                 colSpan={4}
@@ -69,13 +83,11 @@ function Page() {
                                 Carregando...
                             </td>
                         </tr>
-
                         <tr>
                             <td colSpan={4} align="center">
                                 Nenhum item encontrado
                             </td>
                         </tr>
-
                         <tr>
                             <td
                                 colSpan={4}
