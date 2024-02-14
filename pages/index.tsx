@@ -14,6 +14,7 @@ function Page() {
     const [loading, setLoading] = useState(true);
 
     const hasMorePages = totalPages > page;
+
     useEffect(() => {
         todoController.get({ page }).then(({ todos, pages }) => {
             setTotalPages(pages);
