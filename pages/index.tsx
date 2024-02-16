@@ -8,22 +8,29 @@ interface HomeTodo {
     content: string;
 }
 function Page() {
+    const [initalLoadComplete, setInitialLoadComplete] = useState(false);
     const [totalPages, setTotalPages] = useState(0);
     const [todos, setTodos] = useState<HomeTodo[]>([]);
     const [page, setPage] = useState(1);
-    const [loading, setLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+    const hasNoItems = todos.length === 0 && isLoading === false;
 
     const hasMorePages = totalPages > page;
 
     useEffect(() => {
-        todoController.get({ page }).then(({ todos, pages }) => {
-            setTotalPages(pages);
-            setTodos((oldTodos) => {
-                return [...oldTodos, ...todos];
-            });
-        });
-        setLoading(false);
-    }, [page]);
+        setInitialLoadComplete(true);
+        if (!initalLoadComplete) {
+            todoController
+                .get({ page })
+                .then(({ todos, pages }) => {
+                    setTotalPages(pages);
+                    setTodos(todos);
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
+        }
+    }, []);
 
     return (
         <main>
@@ -65,7 +72,7 @@ function Page() {
                     </thead>
 
                     <tbody>
-                        {!loading &&
+                        {!isLoading &&
                             todos.map((todo) => {
                                 return (
                                     <tr key={todo.uid}>
@@ -82,7 +89,7 @@ function Page() {
                                     </tr>
                                 );
                             })}
-                        {loading ? (
+                        {isLoading && (
                             <tr>
                                 <td
                                     colSpan={4}
@@ -92,12 +99,14 @@ function Page() {
                                     Carregando...
                                 </td>
                             </tr>
-                        ) : null}
-                        <tr>
-                            <td colSpan={4} align="center">
-                                Nenhum item encontrado
-                            </td>
-                        </tr>
+                        )}
+                        {hasNoItems && (
+                            <tr>
+                                <td colSpan={4} align="center">
+                                    Nenhum item encontrado
+                                </td>
+                            </tr>
+                        )}
                         {hasMorePages && (
                             <tr>
                                 <td
@@ -107,7 +116,25 @@ function Page() {
                                 >
                                     <button
                                         data-type="load-more"
-                                        onClick={() => setPage(page + 1)}
+                                        onClick={() => {
+                                            setIsLoading(true);
+                                            const nextPage = page + 1;
+                                            setPage(nextPage);
+                                            todoController
+                                                .get({ page: nextPage })
+                                                .then(({ todos, pages }) => {
+                                                    setTotalPages(pages);
+                                                    setTodos((oldTodos) => {
+                                                        return [
+                                                            ...oldTodos,
+                                                            ...todos,
+                                                        ];
+                                                    });
+                                                })
+                                                .finally(() => {
+                                                    setIsLoading(false);
+                                                });
+                                        }}
                                     >
                                         Página {page} Carregar mais{" "}
                                         <span
