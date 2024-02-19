@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GlobalStyles } from "@ui/theme/GlobalStyles";
 import { todoController } from "@ui/controller/todo";
 
@@ -8,18 +8,22 @@ interface HomeTodo {
     content: string;
 }
 function Page() {
-    const [initalLoadComplete, setInitialLoadComplete] = useState(false);
+    const initalLoadComplete = useRef(false);
     const [totalPages, setTotalPages] = useState(0);
     const [todos, setTodos] = useState<HomeTodo[]>([]);
     const [page, setPage] = useState(1);
+    const [search, setSearch] = useState("");
     const [isLoading, setIsLoading] = useState(true);
-    const hasNoItems = todos.length === 0 && isLoading === false;
+    const homeTodos = todoController.filterTodosbyContent<HomeTodo>(
+        todos,
+        search
+    );
 
+    const hasNoItems = homeTodos.length === 0 && isLoading === false;
     const hasMorePages = totalPages > page;
 
     useEffect(() => {
-        setInitialLoadComplete(true);
-        if (!initalLoadComplete) {
+        if (!initalLoadComplete.current) {
             todoController
                 .get({ page })
                 .then(({ todos, pages }) => {
@@ -29,6 +33,7 @@ function Page() {
                 .finally(() => {
                     setIsLoading(false);
                 });
+            initalLoadComplete.current = true;
         }
     }, []);
 
@@ -56,6 +61,9 @@ function Page() {
                     <input
                         type="text"
                         placeholder="Filtrar lista atual, ex: Dentista"
+                        onChange={function handleSearch(event) {
+                            setSearch(event.target.value);
+                        }}
                     />
                 </form>
 
@@ -73,7 +81,7 @@ function Page() {
 
                     <tbody>
                         {!isLoading &&
-                            todos.map((todo) => {
+                            homeTodos.map((todo) => {
                                 return (
                                     <tr key={todo.uid}>
                                         <td>

@@ -4,7 +4,19 @@ interface TodoControllerGetParams {
     page: number;
 }
 async function get(params: TodoControllerGetParams) {
-    return todoRepository.get({ page: params.page, limit: 1 });
+    return todoRepository.get({ page: params.page, limit: 2 });
 }
 
-export const todoController = { get };
+function filterTodosbyContent<T>(
+    todos: Array<T & { content: string }>,
+    search: string
+): T[] {
+    const homeTodos = todos.filter((todo) => {
+        const searchNormalized = search.toLocaleLowerCase();
+        const contentNormalized = todo.content.toLocaleLowerCase();
+        return contentNormalized.includes(searchNormalized);
+    });
+
+    return homeTodos;
+}
+export const todoController = { get, filterTodosbyContent };
