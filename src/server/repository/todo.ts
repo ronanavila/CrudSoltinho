@@ -16,7 +16,7 @@ function get({
 }: TodoRepositoryGetParams = {}): TodoRepositoryGetOutput {
     const currentPage = page || 1;
     const currentLimit = limit || 10;
-    const ALL_TODOS = read();
+    const ALL_TODOS = read().reverse();
 
     const startIndex = (currentPage - 1) * currentLimit;
     const endINdex = currentPage * currentLimit;
