@@ -34,7 +34,7 @@ export function read(): Array<Todo> {
     return db.todos;
 }
 
-function update(uid: UUID, partialTodo: Partial<Todo>): Todo {
+export function update(uid: UUID, partialTodo: Partial<Todo>): Todo {
     let updatedTodo;
     const todos = read();
     todos.forEach((currentTodo) => {
