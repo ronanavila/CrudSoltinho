@@ -42,4 +42,25 @@ function create({ content, onError, onSuccsess }: TodoControllerCreateParams) {
             onError();
         });
 }
-export const todoController = { get, filterTodosbyContent, create };
+
+interface TodoControllerToggleDoneParams {
+    uid: string;
+    updateTodoOnScreen: () => void;
+    onError: () => void;
+}
+function toggleDone({
+    uid,
+    updateTodoOnScreen,
+    onError,
+}: TodoControllerToggleDoneParams) {
+    // updateTodoOnScreen();
+    todoRepository
+        .toggleDone(uid)
+        .then(() => {
+            updateTodoOnScreen();
+        })
+        .catch(() => {
+            onError();
+        });
+}
+export const todoController = { get, filterTodosbyContent, create, toggleDone };

@@ -6,6 +6,7 @@ const bg = "https://mariosouto.com/cursos/crudcomqualidade/bg";
 interface HomeTodo {
     uid: string;
     content: string;
+    done: boolean;
 }
 function Page() {
     const initalLoadComplete = useRef(false);
@@ -111,10 +112,50 @@ function Page() {
                                 return (
                                     <tr key={todo.uid}>
                                         <td>
-                                            <input type="checkbox" />
+                                            <input
+                                                type="checkbox"
+                                                checked={todo.done}
+                                                onChange={function handleToggle() {
+                                                    todoController.toggleDone({
+                                                        uid: todo.uid,
+                                                        updateTodoOnScreen() {
+                                                            setTodos(
+                                                                (
+                                                                    currentTodos
+                                                                ) => {
+                                                                    return currentTodos.map(
+                                                                        (
+                                                                            currentTodo
+                                                                        ) => {
+                                                                            if (
+                                                                                currentTodo.uid ===
+                                                                                todo.uid
+                                                                            ) {
+                                                                                return {
+                                                                                    ...currentTodo,
+                                                                                    done: !currentTodo.done,
+                                                                                };
+                                                                            }
+                                                                            return currentTodo;
+                                                                        }
+                                                                    );
+                                                                }
+                                                            );
+                                                        },
+                                                        onError() {
+                                                            alert(
+                                                                "Falha ao atualizar a TODO"
+                                                            );
+                                                        },
+                                                    });
+                                                }}
+                                            />
                                         </td>
                                         <td>{todo.uid.substring(0, 4)}</td>
-                                        <td>{todo.content}</td>
+                                        <td>
+                                            {!todo.done && todo.content}
+                                            {todo.done && <s>{todo.content}</s>}
+                                        </td>
                                         <td align="right">
                                             <button data-type="delete">
                                                 Apagar
