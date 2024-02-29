@@ -1,6 +1,5 @@
 import { z as schema } from "zod";
 import { Todo, TodoSchema } from "@ui/schema/todo";
-import { METHODS } from "http";
 
 interface TodoRepositoryGetParams {
     page: number;
@@ -73,7 +72,16 @@ async function toggleDone(todoUid: string): Promise<Todo> {
     throw new Error(`Failed to update a TODO with id ${todoUid}`);
 }
 
-export const todoRepository = { get, createByContent, toggleDone };
+async function deleteById(todoUid: string): Promise<void> {
+    const response = await fetch(`/api/todos/${todoUid}`, {
+        method: "DELETE",
+    });
+    if (!response.ok) {
+        throw new Error(`Failed to delete a TODO with id ${todoUid}`);
+    }
+}
+
+export const todoRepository = { get, createByContent, toggleDone, deleteById };
 
 function parseTodosFromServer(responseBody: unknown): {
     total: number;

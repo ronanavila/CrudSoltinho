@@ -48,6 +48,7 @@ interface TodoControllerToggleDoneParams {
     updateTodoOnScreen: () => void;
     onError: () => void;
 }
+
 function toggleDone({
     uid,
     updateTodoOnScreen,
@@ -63,4 +64,16 @@ function toggleDone({
             onError();
         });
 }
-export const todoController = { get, filterTodosbyContent, create, toggleDone };
+
+async function deleteById(uid: string): Promise<void> {
+    const todoUid = uid;
+    await todoRepository.deleteById(todoUid);
+}
+
+export const todoController = {
+    get,
+    filterTodosbyContent,
+    create,
+    toggleDone,
+    deleteById,
+};

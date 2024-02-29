@@ -157,7 +157,36 @@ function Page() {
                                             {todo.done && <s>{todo.content}</s>}
                                         </td>
                                         <td align="right">
-                                            <button data-type="delete">
+                                            <button
+                                                data-type="delete"
+                                                onClick={function handleClick() {
+                                                    todoController
+                                                        .deleteById(todo.uid)
+                                                        .then(() => {
+                                                            setTodos(
+                                                                (
+                                                                    currentTodos
+                                                                ) => {
+                                                                    return currentTodos.filter(
+                                                                        (
+                                                                            currentTodo
+                                                                        ) => {
+                                                                            return (
+                                                                                currentTodo.uid !==
+                                                                                todo.uid
+                                                                            );
+                                                                        }
+                                                                    );
+                                                                }
+                                                            );
+                                                        })
+                                                        .catch(() => {
+                                                            console.error(
+                                                                "Fail to delete"
+                                                            );
+                                                        });
+                                                }}
+                                            >
                                                 Apagar
                                             </button>
                                         </td>
