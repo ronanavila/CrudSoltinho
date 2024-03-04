@@ -11,7 +11,9 @@
         "start": "next start",
         "lint": "eslint ./**/*.{js,jsx,ts,tsx}",
         "lint:fix": "npm run lint -- --fix",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "cy:open": "cypress open",
+        "cy:run": "cypress run",
+        "test": "start-server-and-test dev http://localhost:3000 cy:run"
     },
     "keywords": [],
     "author": "",
@@ -21,6 +23,7 @@
         "@types/react": "18.2.55",
         "@types/uuid": "^9.0.8",
         "@typescript-eslint/eslint-plugin": "^5.62.0",
+        "cypress": "^13.6.6",
         "eslint": "^8.56.0",
         "eslint-config-prettier": "^8.10.0",
         "eslint-plugin-import": "^2.29.1",
@@ -29,7 +32,8 @@
         "eslint-plugin-promise": "^6.1.1",
         "eslint-plugin-react": "^7.33.2",
         "nodemon": "^3.0.3",
-        "prettier": "^2.8.8"
+        "prettier": "^2.8.8",
+        "start-server-and-test": "^2.0.3"
     },
     "dependencies": {
         "next": "^14.1.0",
