@@ -3,77 +3,77 @@ import { Todo } from "@ui/schema/todo";
 import { z as schema } from "zod";
 
 interface TodoControllerGetParams {
-    page: number;
+  page: number;
 }
 async function get(params: TodoControllerGetParams) {
-    return todoRepository.get({ page: params.page, limit: 2 });
+  return todoRepository.get({ page: params.page, limit: 2 });
 }
 
 function filterTodosbyContent<T>(
-    todos: Array<T & { content: string }>,
-    search: string
+  todos: Array<T & { content: string }>,
+  search: string
 ): T[] {
-    const homeTodos = todos.filter((todo) => {
-        const searchNormalized = search.toLocaleLowerCase();
-        const contentNormalized = todo.content.toLocaleLowerCase();
-        return contentNormalized.includes(searchNormalized);
-    });
+  const homeTodos = todos.filter((todo) => {
+    const searchNormalized = search.toLocaleLowerCase();
+    const contentNormalized = todo.content.toLocaleLowerCase();
+    return contentNormalized.includes(searchNormalized);
+  });
 
-    return homeTodos;
+  return homeTodos;
 }
 interface TodoControllerCreateParams {
-    content?: string;
-    onError: () => void;
-    onSuccsess: (todo: Todo) => void;
+  content?: string;
+  onError: () => void;
+  onSuccsess: (todo: Todo) => void;
 }
 function create({ content, onError, onSuccsess }: TodoControllerCreateParams) {
-    const parsedParams = schema.string().min(1).safeParse(content);
+  const parsedParams = schema.string().min(1).safeParse(content);
 
-    if (!parsedParams.success) {
-        onError();
-        return;
-    }
-    todoRepository
-        .createByContent(parsedParams.data)
-        .then((newTodo) => {
-            onSuccsess(newTodo);
-        })
-        .catch(() => {
-            onError();
-        });
+  if (!parsedParams.success) {
+    onError();
+    return;
+  }
+  todoRepository
+    .createByContent(parsedParams.data)
+    .then((newTodo) => {
+      onSuccsess(newTodo);
+    })
+    .catch(() => {
+      onError();
+    });
 }
 
 interface TodoControllerToggleDoneParams {
-    uid: string;
-    updateTodoOnScreen: () => void;
-    onError: () => void;
+  uid: string;
+  updateTodoOnScreen: () => void;
+  onError: () => void;
 }
 
 function toggleDone({
-    uid,
-    updateTodoOnScreen,
-    onError,
+  uid,
+  updateTodoOnScreen,
+  onError,
 }: TodoControllerToggleDoneParams) {
-    // updateTodoOnScreen();
-    todoRepository
-        .toggleDone(uid)
-        .then(() => {
-            updateTodoOnScreen();
-        })
-        .catch(() => {
-            onError();
-        });
+  // updateTodoOnScreen();
+  todoRepository
+    .toggleDone(uid)
+    .then(() => {
+      updateTodoOnScreen();
+    })
+    .catch(() => {
+      onError();
+    });
 }
 
 async function deleteById(uid: string): Promise<void> {
-    const todoUid = uid;
-    await todoRepository.deleteById(todoUid);
+  const todoUid = uid;
+  await todoRepository.deleteById(todoUid);
 }
 
 export const todoController = {
-    get,
-    filterTodosbyContent,
-    create,
-    toggleDone,
-    deleteById,
+  get,
+  filterTodosbyContent,
+  create,
+  toggleDone,
+  deleteById,
 };
